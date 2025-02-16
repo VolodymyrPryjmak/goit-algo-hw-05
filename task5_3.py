@@ -39,7 +39,6 @@ def parse_log_line(line: str) -> dict:
         log_lines.append({"data": el[0], "time": el[1], "level": el[2], "message": elem[poz_message:].strip()})
         #level.add(el[2])   
         level_all.append(el[2])
-
     return log_lines,  count_logs_by_level(level_all) 
 
 def load_logs(file_path: str) -> list:
@@ -61,6 +60,7 @@ def main():
             print(f"{logfile} не знайдено.") 
     else:
         print("logfile не вказано.")   
+    return
 
 if __name__ == "__main__":
      main()
