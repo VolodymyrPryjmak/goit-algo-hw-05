@@ -1,60 +1,26 @@
 from functools import wraps
 
-def input_errorParse(parse_input):
+def input_error(func):
     def inner(*args, **kwargs):
         try:
-            return parse_input(*args, **kwargs)
+            return func(*args, **kwargs)
         except ValueError:
-            return "Помилка введення параметрів."
-
-    return inner
-
-def input_error(add):
-    def inner(*args, **kwargs):
-        try:
-            return add(*args, **kwargs)
-        except ValueError:
-            return "Після команди add введіть ім'я і номер телефону абонента."
-
-    return inner
-
-def input_errorCh(change):
-    def inner(*args, **kwargs):
-        try:
-            return change(*args, **kwargs)
-        except ValueError:
-            return "Після команди change введіть ім'я і новий номер телефону."
+            if func.__name__ == "add_contact":
+                return "Після команди add введіть ім'я і номер абонента."
+            elif func.__name__ == "change_contact":
+                return "Після команди change введіть ім'я і новий номер телефону."    
+            elif func.__name__ == "show_phone":
+                return "Після команди phone введіть ім'я абонента."  
+            else:
+                return "Неправильний ввід даних"      
         except KeyError:
-            return "Ім'я неправильне."
+            return "Помилка вводу даних."
         except IndexError:
-            return "Не введено абонента."
+            if func.__name__ == "show_phone":
+               return "Не введено абонента."
 
     return inner
 
-def input_errorShow(show):
-    def inner(*args, **kwargs):
-        try:
-            return show(*args, **kwargs)
-        except ValueError:
-            return "Після команди phone введіть ім'я абонента."
-        except IndexError:
-            return "Не введено абонента."
-
-    return inner
-
-def input_errorAll(all):
-    def inner(*args, **kwargs):
-        try:
-            return all(*args, **kwargs)
-        except ValueError:
-            return "Неправильні параметри."
-        except IndexError:
-            return "Неправильний ввід."
-
-    return inner
-
-
-@input_errorParse
 def parse_input(user_input):
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
@@ -66,24 +32,24 @@ def add_contact(args, contacts):
     contacts[name] = phone
     return "Contact added."
 
-@input_errorCh
+@input_error
 def change_contact(args, contacts):
     name, phone = args
-    if str(args[0]).strip() in contacts:
+    if name in contacts:
         contacts[name] = phone
     else:
         return "Контакт не знайдено."     
     return "Contact updated."
 
-@input_errorShow
+@input_error
 def show_phone(args, contacts):
     name = args[0]
-    if str(args[0]).strip() in contacts:
+    if name in contacts:
         return contacts[name]
     else:
         return "Контакт не знайдено."     
 
-@input_errorAll
+@input_error
 def all(contacts):
     return contacts.items() 
 
@@ -112,4 +78,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-# python e:\MyStudy\task5_4.py    
+# 
+#     python e:\MyStudy\task5_4.py
